@@ -45,18 +45,22 @@ Fastfetch only runs if:
 ## 3. Font and Icons Issues
 
 ### Symbols or icons appear as missing boxes or question marks
-1. Ensure a Nerd Font is installed, preferably `JetBrainsMono Nerd Font`.
-2. On Ubuntu / Debian:
+1. Ensure the patched **JetBrainsMono Nerd Font** is installed (the standard distro package `fonts-jetbrains-mono` provides Latin glyphs but lacks Nerd Font icons).
+2. Install JetBrainsMono Nerd Font into your user font directory:
    ```bash
-   sudo apt install fonts-jetbrains-mono
+   mkdir -p ~/.local/share/fonts
+   curl -fLo /tmp/JetBrainsMono.tar.xz https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.tar.xz
+   tar -xf /tmp/JetBrainsMono.tar.xz -C ~/.local/share/fonts/
+   fc-cache -f ~/.local/share/fonts/
+   rm -f /tmp/JetBrainsMono.tar.xz
    ```
-   Or download the latest archive from [Nerd Fonts releases](https://www.nerdfonts.com/).
-3. On Arch Linux:
-   ```bash
-   sudo pacman -S ttf-jetbrains-mono-nerd
+3. Run `./scripts/doctor.sh` to confirm font detection:
    ```
-4. Verify Kitty config fallback:
-   Kitty's configuration in `~/.config/kitty/kitty.conf` maps symbol ranges (`U+E0A0-U+E0A3`, etc.) to `PowerlineSymbols` and `Symbols Nerd Font`.
+   [PASS] JetBrainsMono Nerd Font found in fontconfig cache.
+   ```
+4. Note on Kitty `symbol_map`:
+   Kitty renders Nerd Font glyphs natively when `font_family JetBrainsMono Nerd Font` is active.
+   Do not add overlapping `symbol_map` ranges (such as mapping `U+E0A0-U+E0A3` to both `PowerlineSymbols` and `Symbols Nerd Font`), as Kitty's range coalesce algorithm crashes with `KeyError: (start, end)` when overlapping intervals are assigned across multiple font families.
 
 ---
 

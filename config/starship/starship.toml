@@ -13,6 +13,9 @@ $character"""
 
 right_format = """$status"""
 
+# Active color palette (must be defined in root table before module tables)
+palette = "catppuccin_mocha"
+
 # Prompt symbol
 [character]
 success_symbol = "[➜](bold green)"
@@ -71,8 +74,8 @@ ssh_only = true
 style = "bold yellow"
 format = "[$hostname]($style):"
 
-# Catppuccin Mocha color palette palette map
-[palette.catppuccin_mocha]
+# Catppuccin Mocha color palette definition
+[palettes.catppuccin_mocha]
 rosewater = "#f5e0dc"
 flamingo = "#f2cdcd"
 pink = "#f5c2e7"
@@ -99,6 +102,4 @@ surface0 = "#313244"
 base = "#1e1e2e"
 mantle = "#181825"
 crust = "#11111b"
-
-palette = "catppuccin_mocha"
 

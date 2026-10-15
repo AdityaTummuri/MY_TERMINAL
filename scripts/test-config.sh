@@ -59,9 +59,9 @@ json.loads("\n".join(lines))
     fi
 fi
 
-# 4. Validate Starship TOML
+# 4. Validate Starship TOML & Structure
 echo ""
-echo "[4] Checking Starship TOML syntax..."
+echo "[4] Checking Starship TOML syntax and structure..."
 if command -v python3 >/dev/null 2>&1; then
     if python3 -c '
 import sys
@@ -73,25 +73,72 @@ except ImportError:
     except ImportError:
         sys.exit(0)
 with open(sys.argv[1], "rb") as f:
-    tomllib.load(f)
+    data = tomllib.load(f)
+
+# Semantic checks for Starship config
+palette = data.get("palette")
+if not isinstance(palette, str):
+    print("Error: root palette must be a string", file=sys.stderr)
+    sys.exit(1)
+
+palettes = data.get("palettes")
+if not isinstance(palettes, dict) or palette not in palettes:
+    print(f"Error: defined palette \"{palette}\" not found under [palettes.<name>]", file=sys.stderr)
+    sys.exit(1)
 ' "$SCRIPT_DIR/config/starship/starship.toml" 2>/dev/null; then
-        echo "  [PASS] config/starship/starship.toml syntax is valid"
+        echo "  [PASS] config/starship/starship.toml syntax & palette structure are valid"
     else
-        echo "  [FAIL] config/starship/starship.toml invalid TOML" >&2
+        echo "  [FAIL] config/starship/starship.toml invalid TOML or palette structure" >&2
         ERRORS=$((ERRORS + 1))
     fi
 fi
 
-# 5. Validate Kitty conf basic syntax
+# 5. Validate Starship executable evaluation if starship is installed
+if command -v starship >/dev/null 2>&1; then
+    starship_err=$(TERM=xterm-256color STARSHIP_CONFIG="$SCRIPT_DIR/config/starship/starship.toml" starship prompt 2>&1 >/dev/null || true)
+    if [[ -z "$starship_err" ]]; then
+        echo "  [PASS] starship prompt evaluates without warnings or errors"
+    else
+        echo "  [FAIL] starship prompt produced warning/error: $starship_err" >&2
+        ERRORS=$((ERRORS + 1))
+    fi
+fi
+
+# 6. Validate Kitty conf format and symbol_map safety
 echo ""
-echo "[5] Checking Kitty conf format..."
-# Kitty configs are key-value pairs or empty/comments
+echo "[6] Checking Kitty conf format and symbol_map safety..."
 kitty_invalid_lines=$(grep -vE '^\s*(#|$|[a-zA-Z0-9_-]+(\s+.*)?$)' "$SCRIPT_DIR/config/kitty/kitty.conf" || true)
 if [[ -z "$kitty_invalid_lines" ]]; then
     echo "  [PASS] config/kitty/kitty.conf format is valid"
 else
     echo "  [FAIL] config/kitty/kitty.conf unexpected syntax: $kitty_invalid_lines" >&2
     ERRORS=$((ERRORS + 1))
+fi
+
+# Verify active symbol_map entries do not trigger Kitty render crash
+if command -v python3 >/dev/null 2>&1 && [[ -d "/usr/lib/kitty" ]]; then
+    if PYTHONPATH=/usr/lib/kitty python3 -c '
+import sys
+from kitty.fonts.render import coalesce_symbol_maps
+from kitty.options.utils import symbol_map
+
+active_maps = {}
+with open(sys.argv[1]) as f:
+    for line in f:
+        line = line.strip()
+        if line.startswith("symbol_map ") and not line.startswith("#"):
+            val = line[len("symbol_map "):].strip()
+            for k, v in symbol_map(val):
+                active_maps[k] = v
+
+if active_maps:
+    coalesce_symbol_maps(active_maps)
+' "$SCRIPT_DIR/config/kitty/kitty.conf" 2>/dev/null; then
+        echo "  [PASS] Kitty symbol_map entries are non-conflicting and crash-free"
+    else
+        echo "  [FAIL] Kitty symbol_map entries cause KeyError or crash in renderer" >&2
+        ERRORS=$((ERRORS + 1))
+    fi
 fi
 
 echo ""
