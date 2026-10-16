@@ -1,6 +1,9 @@
 # Starship Prompt Configuration
 # Displays directory, Git branch/status, command duration, and exit status
 
+# Prompt layout & options
+add_newline = false
+
 format = """
 $username\
 $hostname\
@@ -23,10 +26,10 @@ error_symbol = "[✗](bold red)"
 
 # Directory styling
 [directory]
-truncation_length = 3
-truncation_symbol = "…/"
-style = "bold lavender"
-read_only = " 󰌾"
+truncation_length = 0
+truncate_to_repo = false
+style = "lavender"
+read_only = " 🔒"
 
 # Git branch
 [git_branch]
@@ -64,15 +67,16 @@ style = "bold red"
 
 # Username & Hostname
 [username]
-show_always = false
+show_always = true
 style_user = "bold blue"
 style_root = "bold red"
 format = "[$user]($style)@"
 
 [hostname]
-ssh_only = true
+ssh_only = false
 style = "bold yellow"
-format = "[$hostname]($style):"
+ssh_symbol = "🌐 "
+format = "[$ssh_symbol$hostname]($style) "
 
 # Catppuccin Mocha color palette definition
 [palettes.catppuccin_mocha]

@@ -1,0 +1,95 @@
+# Kitty Terminal Configuration
+# Theme: Catppuccin Mocha
+# Font: JetBrainsMono Nerd Font with graceful fallbacks
+
+# Font configuration
+font_family      JetBrainsMono Nerd Font
+bold_font        JetBrainsMono Nerd Font Bold
+italic_font      JetBrainsMono Nerd Font Italic
+bold_italic_font JetBrainsMono Nerd Font Bold Italic
+font_size        11.5
+
+# Symbol fallbacks:
+# When JetBrainsMono Nerd Font is used as primary font, Nerd Font glyphs are
+# rendered directly without requiring symbol_map overrides.
+# NOTE: Overlapping symbol_map ranges across multiple families cause Kitty's
+# font render coalesce algorithm to crash with KeyError: (start, end).
+# If a standalone symbol font (e.g. Symbols Nerd Font) is ever needed as a fallback,
+# use non-overlapping ranges only. Kept disabled by default for stability:
+# symbol_map U+23FB-U+23FE,U+2B58,U+E200-U+E2A9,U+E0A0-U+E0A3,U+E0B0-U+E0BF,U+E0C0-U+E0C8,U+E0CC-U+E0CF,U+E0D0-U+E0D2,U+E0D4,U+E700-U+E7C5,U+F000-U+F2E0,U+2665,U+26A1,U+F400-U+F4A8,U+F67C,U+E000-U+E00A Symbols Nerd Font
+
+# Window appearance & behavior
+linux_display_server x11
+scrollback_lines 10000
+enable_audio_bell no
+window_padding_width 8
+remember_window_size yes
+initial_window_width 900
+initial_window_height 600
+hide_window_decorations no
+confirm_os_window_close 0
+
+# Tab bar styling
+tab_bar_edge bottom
+tab_bar_style powerline
+tab_powerline_style slanted
+
+# Catppuccin Mocha Color Palette
+foreground              #CDD6F4
+background              #1E1E2E
+selection_foreground    #1E1E2E
+selection_background    #F5E0DC
+
+# Cursor colors
+cursor                  #F5E0DC
+cursor_text_color       #1E1E2E
+
+# URL underline color
+url_color               #F5E0DC
+
+# Kitty window border colors
+active_border_color     #B4BEFE
+inactive_border_color   #6C7086
+bell_border_color       #F9E2AF
+
+# Tab bar colors
+active_tab_foreground   #11111B
+active_tab_background   #CBA6F7
+inactive_tab_foreground #CDD6F4
+inactive_tab_background #181825
+tab_bar_background      #11111B
+
+# The 16 terminal colors (Catppuccin Mocha)
+
+# black
+color0 #45475A
+color8 #585B70
+
+# red
+color1 #F38BA8
+color9 #F38BA8
+
+# green
+color2  #A6E3A1
+color10 #A6E3A1
+
+# yellow
+color3  #F9E2AF
+color11 #F9E2AF
+
+# blue
+color4  #89B4FA
+color12 #89B4FA
+
+# magenta
+color5  #F5C2E7
+color13 #F5C2E7
+
+# cyan
+color6  #94E2D5
+color14 #94E2D5
+
+# white
+color7  #BAC2DE
+color15 #A6ADC8
+

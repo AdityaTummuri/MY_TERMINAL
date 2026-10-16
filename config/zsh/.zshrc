@@ -83,6 +83,21 @@ if command -v fzf >/dev/null 2>&1; then
     done
 fi
 
+# tmux safe wrapper (prevents accidental nesting warnings when tmux is already active)
+tmux() {
+    if [[ -n "$TMUX" && "$#" -eq 0 ]]; then
+        echo "tmux is already running in this terminal session."
+        echo "Commands:"
+        echo "  - Detach session : Press Ctrl+a then d"
+        echo "  - Split vertical : Press Ctrl+a then |"
+        echo "  - Split horizontal: Press Ctrl+a then -"
+        echo "  - New window     : Press Ctrl+a then c"
+        echo "  - List sessions  : command tmux ls"
+        return 0
+    fi
+    command tmux "$@"
+}
+
 # Zsh autosuggestions (use distro package if present, or manual clone)
 for suggest in /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
                /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh \
@@ -90,6 +105,17 @@ for suggest in /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
                "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"; do
     if [[ -f "$suggest" ]]; then
         source "$suggest"
+        break
+    fi
+done
+
+# Zsh syntax highlighting (MUST be sourced after other plugins and completion)
+for syntax_hl in /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+                 /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+                 "${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" \
+                 "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"; do
+    if [[ -f "$syntax_hl" ]]; then
+        source "$syntax_hl"
         break
     fi
 done
@@ -102,13 +128,25 @@ else
     PROMPT='%F{magenta}%n@%m%f:%F{cyan}%~%f%# '
 fi
 
-# 6. Fastfetch on Interactive Startup
-# Config switch: set ENABLE_FASTFETCH=false in ~/.zshrc.local to disable
+# 6. System Information Display (Neofetch / Fastfetch)
+# Displayed ONCE per login session in the initial Kitty terminal window.
+# Never runs in subsequent windows, tabs, non-interactive shells, SSH commands, scripts, tmux panes, or .zshrc reloads.
 ENABLE_FASTFETCH=${ENABLE_FASTFETCH:-true}
 
 if [[ -o interactive ]] && [[ "$ENABLE_FASTFETCH" == "true" ]]; then
-    if command -v fastfetch >/dev/null 2>&1; then
-        fastfetch
+    LOGIN_RUN_FLAG="${XDG_RUNTIME_DIR:-/tmp}/omen_terminal_login_shown"
+    # Criteria:
+    # 1. Not running inside a tmux pane/window
+    # 2. Not already displayed in this shell session
+    # 3. Launched as the login autostart terminal (OMEN_LOGIN_TERMINAL=1) OR first interactive terminal before flag is created
+    if [[ -z "$TMUX" && -z "$_OMEN_FETCH_DISPLAYED" && ! -f "$LOGIN_RUN_FLAG" ]]; then
+        touch "$LOGIN_RUN_FLAG" 2>/dev/null || true
+        export _OMEN_FETCH_DISPLAYED=1
+        if command -v neofetch >/dev/null 2>&1; then
+            neofetch
+        elif command -v fastfetch >/dev/null 2>&1; then
+            fastfetch
+        fi
     fi
 fi
 
