@@ -34,6 +34,8 @@ bash packages/detect-distro.sh
 ./install.sh --profile full --dry-run
 ```
 
+The dry run reports the planned actions without creating configuration links or changing files in your home directory. It does not install packages.
+
 ### 3. Install Configurations
 Choose between `minimal` (Kitty + Zsh + Starship) or `full` (+ Fastfetch, Tmux, modern CLI tools):
 ```bash
