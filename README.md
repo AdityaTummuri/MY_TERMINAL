@@ -19,6 +19,8 @@ Built with native distribution package adapters, safe manifest-driven symlinking
 
 ## Quickstart
 
+**Before you begin:** Clone this repository and run the commands below from its root directory.
+
 ### 1. View Recommended Distro Packages
 Check packages for your distro without running any privileged commands:
 ```bash
