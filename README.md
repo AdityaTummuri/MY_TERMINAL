@@ -53,36 +53,15 @@ Choose between `minimal` (Kitty + Zsh + Starship) or `full` (+ Fastfetch, Tmux, 
 
 ---
 
-## Ubuntu 24.04 LTS Package Installation
+## Package Installation by Distribution
 
-OMEN Terminal separates package installation from configuration linking. Run the appropriate command below depending on your desired profile:
+OMEN Terminal separates package installation from configuration linking. Install the packages for your distribution, then return to the Quickstart section to preview and apply the configuration.
 
-### Minimal Profile
-```bash
-# Official APT packages
-sudo apt update && sudo apt install -y kitty zsh fonts-jetbrains-mono curl
+- **Ubuntu / Debian:** Follow the APT instructions in [Installation Guide](docs/INSTALL.md#ubuntu-2404-lts-noble-numbat).
+- **Fedora:** Follow the DNF instructions in [Installation Guide](docs/INSTALL.md#fedora).
+- **Arch Linux:** Follow the pacman instructions in [Installation Guide](docs/INSTALL.md#arch-linux).
 
-# Starship prompt binary (standalone)
-curl -sS https://starship.rs/install.sh | sh
-```
-
-### Full Profile
-```bash
-# Core + modern CLI utilities
-sudo apt update && sudo apt install -y kitty zsh fonts-jetbrains-mono curl fzf zoxide eza bat tmux zsh-autosuggestions
-
-# Starship prompt binary
-curl -sS https://starship.rs/install.sh | sh
-
-# Fastfetch (via official PPA)
-sudo add-apt-repository ppa:zhangsongcui3371/fastfetch
-sudo apt update && sudo apt install -y fastfetch
-
-# JetBrainsMono Nerd Font (for full glyph & icon support)
-mkdir -p ~/.local/share/fonts
-curl -fLo /tmp/JetBrainsMono.tar.xz https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.tar.xz
-tar -xf /tmp/JetBrainsMono.tar.xz -C ~/.local/share/fonts/ && fc-cache -f ~/.local/share/fonts/ && rm -f /tmp/JetBrainsMono.tar.xz
-```
+The installer does not run privileged package commands automatically.
 
 ---
 
